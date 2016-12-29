@@ -2,7 +2,7 @@
 layout: post
 title:  "Mixing React with jQuery"
 date: 2016-12-22
-categories: react jquery
+categories: react jquery rails javascript
 ---
 
 For the past two weeks, I've been merrily mixing jQuery into my React components, and I have a few gotchas to share. jQuery certainly needs no introduction, but if you're new to React, check out [Facebook's _excellent_ documentation on it](https://facebook.github.io/react), and try building something with it - it's a peek into the future!
@@ -16,7 +16,7 @@ The thing is, however, that _that_ hell is not of jQuery's making. So the better
 ## It's all about the state
 
 The main issue you'll encounter if you add jQuery to a React component is unexpected interactions with React's state-based renderer. In most cases, this means issues with modifications to the DOM, made by jQuery, that React isn't aware of.
-g
+
 ### A problematic scenario
 
 Let's take the case of using your friendly neighborhood datepicker inside a component.
@@ -59,7 +59,7 @@ Repeated initializations could cause issues with the datepicker, so my preferred
 
 ```jsx
 class DateInput extends React.component {
-  onComponentDidMount() {
+  componentDidMount() {
     $('.js-date-input-' + this.props.key).myFavDatePicker();
   }
   
@@ -77,22 +77,41 @@ class DateInput extends React.component {
 }
 ```
 
-Note how I've used the `key` prop to uniquely identify the input. The `key` can serve another purpose, which bring me to...
+Note how I've used the `key` prop to uniquely identify the input. The `key` can serve another purpose, which I'll discuss in a bit.
 
-## Use _key_ to regenerate components
+## Clean-up after yourself
 
-TODO: Describe how React's `key` prop can be leveraged to discard messed up components and generated anew when jQuery does something that messes up a component.
+In the above example, we've created a component to manage creation and updation of the datepicker element. We should go one step further and ensure that the component can also manage its own destruction.
+
+jQuery libraries often modify or introduce new elements into the DOM, which is often placed at the bottom of `<body>`, placing it outside the React container. If the React component is unmounted, this leaves open the very real possibility that it'll leave behind junk in the DOM. Cleaning up after yourself should be simple if the library supports it (most do):
+
+```jsx
+class DateInput extends React.component {
+  componentWillUnmount() {
+    $('.js-date-input-' + this.props.key).myFavDatePicker('destroy');
+  }
+  ...
+}
+```
+
+## Using _key_ to regenerate components
+
+In rare cases, direct manipulations of the DOM from jQuery can lead to a situation which renders React unable to update the component. In such situations, it's up to you to alter the `key` prop passed to the component.
+
+Updating `key` instructs React to discard the previous component and create a new one. This gives you a pristine component to work with. In such situations it might be wise to ponder whether a more conventional solution can be had by employing clever(er) coding.
 
 ## Communication with the jQuery world outside
 
-If you're like me, then you're probably introducing React components into an existing project (that uses jQuery), instead of building a entirely React-based application. In this case, you'll need a good way to manage communication between your React (root) component and the jQuery-driven code outside of it.
+If you're like me, then you're probably introducing React components into an existing project (that uses jQuery), instead of building a entirely React-based application. So unless your component is trivial, you'll need a good way to let the jQuery-driven world outside communicate with the React (root) component.
 
-TODO: Write about `ReactDOM` and manually triggering ReactUJS's mount Refer https://facebook.github.io/react/docs/react-dom.html
+React's [Top Level API](https://facebook.github.io/react/blog/2015/10/01/react-render-and-top-level-api.html) makes this super easy. Use `ReactDOM.render` to create or update existing components, and `ReactDOM.unmountComponentAtNode` to destroy existing ones.
+
+Whichever you pick, **do not** do what I did the first time; `$('.react-container'').html('')` will leave behind loaded React components in memory. Ouch. 
 
 ## Server-side rendering is a no-go
 
-React components with jQuery inside render server-side (TODO: Confirm this)- there's no `window` for it to interact with.
+A lot of jQuery code simply won't execute without `window` being available - which it isn't on the server. So if you want to render server-side you'll have to avoid using jQuery for initial render of all components, which can be pretty tricky.
 
 ## Wrap-up
 
-The bottom line is that jQuery is beloved by many, and if using jQuery makes adopting React more palatable then by all means, mix and enjoy. But as the saying goes, _enjoy responsibly_ - keeping the quirks and drawbacks in mind will let you combine the best of both worlds.
+The bottom line is that jQuery is beloved by many, and if using jQuery makes adopting React more palatable then by all means, mix and enjoy. But as the saying goes, _enjoy responsibly_ - keeping the quirks and drawbacks in mind will let you combine the best of both worlds. Cheers!
