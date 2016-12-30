@@ -19,6 +19,7 @@ description: > # this means to ignore newlines until "baseurl:"
   Description pending. :-|
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://blog.harigopal.in" # the base hostname & protocol for your site, e.g. http://example.com
+permalink: "/:categories/:slug/"
 twitter_username: harigopal
 github_username:  harigopal
 
