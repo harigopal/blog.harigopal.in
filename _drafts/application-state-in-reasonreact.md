@@ -1,16 +1,25 @@
 ---
 layout: post
-title: "Shared Application State in ReasonReact"
+title: "Application State in ReasonReact"
 categories: guides
 tags: react reason reasonml reasonreact
 ---
-Want to implement shared state in _ReasonReact_ applications..? Probably not, if I'm being practical. The likelyhood of you, the reader, having even heard about _ReasonML_, let alone _ReasonReact_ is small. While it was featured in [_theStateOfJs 2017_](https://stateofjs.com/2017/flavors/results/), ~80% of survey respondents said that they'd never heard of it. So if you haven't, that's totally OK. Head over to [ReasonML's homepage](https://reasonml.github.io/) right now, and give this new (sort of?) language a spin. It's certainly **cool**, it's built by the folks behind React, and has the might of Facebook behind it.
 
-However, if you're among the ~19.2% who've heard about [ReasonReact](https://reasonml.github.io/reason-react), or the ~0.8% who've actually tried it **and** wondered about how shared / global state can work, this (short) tutorial is for **you**! All of the code I'll refer to in this article is available [on this repo](http://github.com/harigopal/react-re-exp).
+## TL;DR?
+
+I've modified Jared Forsyth's tutorial on ReasonReact, improving application state management. By sending two props, `appState` and `appSend` to all child components, we allow them influence shared state directly, instead of relying on a complex web of callbacks. Sound interesting?
+
+## Go on...
+
+Want to implement shared state in _ReasonReact_ applications..?
+
+Probably not, if I'm being practical. The likelyhood of you, the reader, having even heard about _ReasonML_, let alone _ReasonReact_, is small. While _Reason_ was featured in [_theStateOfJs 2017_](https://stateofjs.com/2017/flavors/results/), ~80% of survey respondents said that they'd never heard of it. So if you haven't, that's totally OK. Head over to [ReasonML's homepage](https://reasonml.github.io/) right now, and give this new (sort of?) language a spin. It's **cool**, it's built by the folks behind React, and is backed by the might of OCaml.
+
+However, if you're among the ~19.2% who've heard about [ReasonML](https://reasonml.github.io/reason-react), or the ~0.8% who've actually tried it **and** wondered about how shared / global state can work, this tutorial is for **you**! All of the code I'll refer to in this article is available [on this repo](http://github.com/harigopal/react-re-exp).
 
 ## But first, some background
 
-Last year, [Jared Forsyth](https://jaredforsyth.com) published [_A ReasonReact Tutorial_](https://jaredforsyth.com/2017/07/05/a-reason-react-tutorial/), an excellent starting point for folks interested in building React applications with ReasonML. The tutorial involves building a simple Todo list app, using reducers to manage application state - a feature provided out-of-the-box by ReasonReact. The application structure looks _something_ like this:
+Last year, [Jared Forsyth](https://jaredforsyth.com) published [_A ReasonReact Tutorial_](https://jaredforsyth.com/2017/07/05/a-reason-react-tutorial/), an excellent starting point for folks interested in building React applications with ReasonML. The tutorial involves building a simple Todo list app, using reducers to manage application state &mdash; a feature provided out-of-the-box by ReasonReact. The application structure looks _something_ like this:
 
 ```
 App implements reducer(action)
@@ -18,9 +27,9 @@ App implements reducer(action)
   -> TodoInput onSubmit=send(AddItem(text))
 ```
 
-Here, the shared state is managed using a reducer present in the root component `App`, and callbacks are passed as props to child components when shared state needs to be updated.
+Here the application state is managed in the root component through a reducer, but child components can update application state only through callbacks that are passed down as props from _root_.
 
-From past experience, I find the process of passing callbacks to child components _clunky_. In larger applications, where a child component can be distant from root, adding new callbacks can deteriorate into something that looks like a relay race. Here's a (silly) example:
+This process of passing callbacks to child components is clunky. In larger applications, where a child component can be distant from root, adding new callbacks can deteriorate into something that looks like a relay race. Here's an example:
 
 ```
 App implementes editCallback(), deleteCallback(), ...
@@ -31,11 +40,11 @@ App implementes editCallback(), deleteCallback(), ...
         => Use deleteCallback()
 ```
 
-A few months ago, [Jasim](#) retweeted an article by [Blair Anderson](#) titled [_You Probably Don't Need Redux_](https://medium.com/@blairanderson/you-probably-dont-need-redux-1b404204a07f) which explains how, in small-to-medium sized React applications, it's often enough to pass two props - `appState` and `setAppState` to all components, allowing nested components direct access to the shared state, bypassing the need to add and _relay_ individual callbacks.
+[Blair Anderson](#) wrote an excellent article titled [&ldquo;You Probably Don&rsquo;t Need Redux&rdquo;](https://medium.com/@blairanderson/you-probably-dont-need-redux-1b404204a07f) which explains how, in small-to-medium sized React applications, it's often enough to pass two props &mdash; `appState` and `setAppState` to all components, allowing nested components direct access to the shared state, bypassing the need to add and _relay_ individual callbacks.
 
 My implementation of Jared's tutorial mixes this idea in, and sends two props, `appState` and `appSend`, to all components that could influence shared state. For the sake of clarity, I'm only going to point out parts of the code that diverge from Jared's tutorial.
 
-## A Reasonable Alternative
+## A reasonable alternative
 
 <script src="https://gist.github.com/harigopal/974109e09597ac17ca71d09eb4000770.js"></script>
 
@@ -43,11 +52,11 @@ My implementation of Jared's tutorial mixes this idea in, and sends two props, `
 
 <script src="https://gist.github.com/harigopal/978e4e5b08431bb420fdb7a9896ada12.js"></script>
 
-When the `TodoItem` component uses the prop `appSend`, it passes an action `TodoApp.ToggleItem`. To correctly resolve the it as `type action`, we need to explicity mention the namespace - the shared module `TodoApp`. Since all components need access to the type definition of _state_ and all possible _actions_, they [must be placed in this separate shared module](https://github.com/harigopal/react-re-exp/blob/master/src/TodoApp.re).
+When the `TodoItem` component uses the prop `appSend`, it passes an action `TodoApp.ToggleItem`. To correctly resolve the it as `type action`, we need to explicity mention the namespace &mdash; the shared module `TodoApp`. Since all components need access to the type definition of _state_ and all possible _actions_, they [must be placed in this separate shared module](https://github.com/harigopal/react-re-exp/blob/master/src/TodoApp.re).
 
 My first attempt at implementing this pattern kept the types _state_ and _action_ in the root component module. However, that just led to a circular dependency issue: `App -> child -> App`, blocking compilation. Extracting shared code to a different module fixed this.
 
-That's pretty much it. Notice how there are no callback functions anywhere? Except for `appSend`, that is. ^_^
+That's pretty much it. Notice how there are no callback functions anywhere?
 
 ## Advantages, and a few caveats
 
@@ -66,7 +75,7 @@ App uses TodoApp.state, TodoApp.action and TodoApp.reducer
   -> TodoItem appState=App.state appSend=App.send
     -> TodoInlineEditor appState=App.state appSend=App.send
       => props.appSend(TodoApp.Edit(todoId, text))
-      -> TodoDeleteButton deleteCallback=deleteCallback
+      -> TodoDeleteButton appSend=App.send
         => props.appSend(TodoApp.Delete(todoId))
 ```
 
@@ -80,6 +89,6 @@ While I'm still getting used to ReasonML and ReasonReact, my initial impressions
 
 <script src="https://gist.github.com/harigopal/89cddfb3ce8f0b74cfc484e2529070c0.js"></script>
 
-The ReasonML compiler error messages can be pretty confusing at times though. And all too often, it just barks that there's _something_ wrong with my syntax on a line, informs me that it crashed because of this, and asks me to file a bug on Reason's repository. Wierd growing pains, I guess.
+The ReasonML compiler error messages can be pretty confusing at times though. And all too often, it just barks that there's _something_ wrong with my syntax on a line, informs me that it crashed because of this, and asks me to file a bug on Reason's repository. `¯\_(ツ)_/¯` Growing pains, I guess.
 
 Over the next couple of months, I'll attempt a complete re-write of my side-project into ReasonML. I'd been using `create-react-app`, so the presence of [reason-scripts](https://github.com/reasonml-community/reason-scripts) makes it simple... to get started. I'm sure I'll be writing more related to this on a later date. :-)
