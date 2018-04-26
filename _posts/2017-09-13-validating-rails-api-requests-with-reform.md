@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Validating Rails API requests with Reform"
+title: "Validating Rails API requests with Reform"
 date: 2017-09-13
 categories: guides
 tags: ruby rails services
