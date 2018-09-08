@@ -4,12 +4,9 @@ title: "Application State in ReasonReact"
 date: 2018-02-17 02:45:00 +0530
 categories: guides
 tags: react reason reasonml reasonreact
-canonical_url: 'https://turaku.com/blog/2018/02/application-state-in-reasonreact.html'
 ---
 
 {{ '201802/callback_1.png' | image_from_cdn:'The Callback Relay Race - Page 1' }}
-
-_This post was originally published on [Turaku's blog](https://turaku.com/blog)._
 
 ## TL;DR?
 
