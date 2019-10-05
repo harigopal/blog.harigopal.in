@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Application State is not the answer"
+date: 2019-10-05 11:00:00 +0530
 categories: guides
 tags: react reasonreact
 ---
@@ -8,6 +9,8 @@ tags: react reasonreact
 So...
 
 This is a total retraction of my last two posts.
+
+{{ '201910/deja-vu.png' | image_from_cdn:'Deja vu' }}
 
 ## Mistakes were made
 
@@ -49,8 +52,8 @@ The issue that pops up as a result is increased _cognitive load_. It's easy to m
 
 When reaching for global / application state as a solution from our toolbox, its critical to examine whether it's worth the costs involved, and whether we're being careful to avoid the pitfalls that it exposes.
 
-State-management based on localized state with plentiful prop drilling is definitely _not_ stylish, but it's based on sound development practises, works _really_ well in most situations, and should be the default choice for React and ReasonReact applications of any level of complexity.
+State-management based on localized state with plentiful prop drilling might not be _stylish_, but it's based on sound development practises, works _really_ well in most situations, and should be the default choice for React and ReasonReact applications of any level of complexity.
 
-As for my pet project, it's future is uncertain. I made a _lot_ of mistakes in that codebase, while learning to use ReasonML and ReasonReact for the first time. It's state management is, quite frankly, a mess. However, thanks to those mistakes, by the time I introduced ReasonML & ReasonReact to my full-time work, I knew enough to be conservative.
+As for my pet project, it's future is uncertain. I started working on it when I was still a beginner with ReasonML, and the mistakes I made while learning have piled up. Its state management is, quite frankly, a mess. However, thanks to those mistakes, by the time I introduced ReasonML & ReasonReact to my full-time work, I knew enough to be conservative.
 
 Right now, I'm focusing on building [PupilFirst](https://www.pupilfirst.com) - an LMS that my company open-sourced recently, and which we've been working on since 2013. It mixes Ruby, ReasonML & GraphQL, and is probably one of the largest open-source ReasonReact webapps out there.
