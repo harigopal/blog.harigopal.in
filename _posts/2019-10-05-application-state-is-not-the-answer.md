@@ -6,19 +6,17 @@ categories: guides
 tags: react reasonreact
 ---
 
-So...
-
-This is a total retraction of my last two posts.
+So... this is a total retraction of my [last](https://blog.harigopal.in/guides/application-state-in-reasonreact) [two](https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react) posts.
 
 {{ '201910/deja-vu.png' | image_from_cdn:'Deja vu' }}
 
 ## Mistakes were made
 
-Using application state, or global state is _not_ right the answer for most developers of front-end components.
+Using application state, or global state, is _not_ the right answer for developing front-end components.
 
 The draw of application state is the creation of a _definitive_ single-source of truth from which our entire app's state can be determined. Then, this _definitive_ state becomes the one and _only_ place where you need to _query_ state. And because it is ubiquitous, adding a new shared property becomes extremely simple; add it once, and it's available everywhere.
 
-This ease of modification is, unfortunately, double-edged. I've noticed two (messy) patterns arise once global state is available.
+This ease of modification is, unfortunately, double-edged. I've noticed two messy patterns arise once global state is available.
 
 ### There is no _local_; everything is _global_
 
@@ -38,6 +36,8 @@ The last option is what I went with, and I never answered all of the questions f
 
 This was me ignoring the _KISS_ principle.
 
+The _simple_ solution here would have been to isolate the _edited_ state of an entry to the component that _does_ the editing - the editor, and communicate changes to higher-level components only once those changes were persisted. A simple UI curtain could have been employed to ensure that users couldn't interact with unrelated parts of the UI while the edit was in progress.
+
 What should have been simple - making a few edits to an entry, and then saving it ended up involving _many_ different components, and is now  unnecessarily complicated because I couldn't say &ldquo;No&rdquo; to a few cool things.
 
 ### Application state is god; all responsibilities are centralised
@@ -47,6 +47,12 @@ I think that [SRP](https://en.wikipedia.org/wiki/Single_responsibility_principle
 When we collect state from different parts of the application, it's almost impossible for all of these values to be (closely) related. Usually, they're collected over time as the application's feature-set expands and evolves, and as such they're going to be incorporated into a single reducer that, increasingly needs to handle values with different purposes.
 
 The issue that pops up as a result is increased _cognitive load_. It's easy to make changes when the number of things that _can_ change is low. The larger the size of the state being managed by a reducer, the harder it is to simply fit all of its variables into _our_ working memory.
+
+When asked for his opinion, here's what [Jasim](http://www.jasimabasheer.com/) had to say about this topic:
+
+> One solution to large reducers that we've been using more and more is to lean on domain-specific modules, and use the reducer just as a very high-level dispatcher.
+>
+> UI handler functions in lower-level components can run their own computation and then pass final results back to a reducer. This keeps the responsibility of each domain closer to the component that handles it, and the implementations are all co-located neatly in their own modules.
 
 ## Back to Basics
 
