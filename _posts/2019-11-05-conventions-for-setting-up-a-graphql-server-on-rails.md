@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Conventions for setting up a GraphQL Server on Rails"
+date: 2019-11-05 20:20:00 +0530
 categories: guides
 tags: react reasonreact
 ---
