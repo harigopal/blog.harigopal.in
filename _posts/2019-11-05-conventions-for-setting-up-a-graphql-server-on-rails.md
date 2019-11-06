@@ -101,11 +101,11 @@ In [PupilFirst](https://www.pupilfirst.com), we've expanded the response object 
 
 <script src="https://gist.github.com/harigopal/0b208181f942adb7cc5beccbfdd5531a.js"></script>
 
-The mutator has simple methods that inject the notifications into the context...
+The query superclass has simple methods that inject notifications into the context...
 
 <script src="https://gist.github.com/harigopal/0b480036b4a5213077c538f49f19f87b.js"></script>
 
-...which gets placed in the response by in GraphQL controller:
+...which then gets placed in the response by the GraphQL controller:
 
 <script src="https://gist.github.com/harigopal/675ef7e93ac142cef4a9d7bc1038b091.js"></script>
 
