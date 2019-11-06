@@ -17,7 +17,7 @@ This post presents a method for setting up a GraphQL server, while also tackling
 1. How do I handle authorization?
 2. How do I avoid N+1 queries?
 
-### Start with `graphql-ruby`.
+### Start with `graphql-ruby`
 
 Use [the gem's documentation](https://graphql-ruby.org/getting_started) to install and get started with `graphql-ruby`. The steps are straight-forward and well-documented, but I suggest not setting up queries and mutations yet - we'll get to that.
 
@@ -25,7 +25,7 @@ Just like with Facebook's documentation about authorization in GraphQL, the [gem
 
 I'd like to suggest an alternative.
 
-### _Resolvers_ authorize and fetch data.
+### _Resolvers_ authorize and fetch data
 
 Let's start by adding an `ApplicationQuery` class that'll act as the base class for _resolvers_ and _mutators_:
 
@@ -41,18 +41,23 @@ Notice how the `users` method simply hands over the responsibility for loading t
 
 What you're looking at is the essence of this approach.
 
-1. All requests are individually authorized
+1. All requests are individually authorized.
 2. There is an assumption that once a query is authorized, all data returned by the resolver (or mutator) can be accessed by the authenticated user.
+3. Avoid N+1-s by making sure that the resolver method `includes` all necessary data for the response.
 
 Before we move onto mutators, let's also look at how we deal with queries that have arguments, using a variation of what we've done above:
 
 <script src="https://gist.github.com/harigopal/d189b80d9d62acdde4bb6e4f8bd4d364.js"></script>
 
-Only a few things are different here. `args` is passed to the resolver in addition to context, and there's an `attr_accessor :id` in the resolver class to make accessing the argument easy. It also makes it pretty clear what data the query is working with. Also, instead of a relation, the `user` method in the resolver returns a `User` object, since the _type_ for the query is a single object.
+Only a few things are different here:
 
-### _Mutators_ authorize, modify, and supply a response.
+1. `args` is passed to the resolver in addition to context.
+2. There's a `property :id` in the resolver class defining what data the query will work with.
+3. Instead of a relation, the `user` method in the resolver returns a `User` object, since the _type_ for the query is a single object.
 
-GraphQL mutations aren't really all that different from queries. They are queries that are, _by convention_, allowed to modify data. And just like queries, they too can return structured data.
+### _Mutators_ authorize, modify, and supply a response
+
+GraphQL mutations aren't really all that different from queries. Mutations are queries that are, _by convention_, allowed to modify data. And just like queries, they too can return structured data.
 
 As with queries, let's start with a simple example that shows just how similar _mutators_ are to _resolvers_.
 
@@ -65,6 +70,7 @@ Notice how there's a call to `.valid?` before the `.create_comment` is called. T
 Again, there's very little that's new here.
 
 1. Because `ApplicationQuery` includes `ActiveModel::Model`, we have access to all of the validation methods that we're familiar with.
+2. The `property` helper simply combines `validates` and `attr_accessor` into a single-step, and helps avoid bugs because the former depends on the latter.
 2. We can either process the request in the mutator directly in the `create_comment` method, or pass it onto a service as shown in the example.
 
 As with queries, there is an assumption that the `create_comment` method will return an object that responds to the _fields_ mentioned in the mutation class. In this case, that's `id`, and as long as the service returns a `Comment` object, everything should work as expected.
@@ -83,7 +89,7 @@ Here, the custom `UpdatePostType` is used to compose exactly what the UI require
 2. Your API is integrated with the editor - it'll suggest names, arguments, and return values - writing correct queries is much simpler.
 3. Your compiler will prevent the application from generating code with invalid queries.
 4. The Rails server will crash with a useful error message if your code ever disobeys the type specification.
-5. Pagination of resources is simple and straight-forward, thanks to built-in, well-thought-out conventions that cover a large variety of pagination-use-cases.
+5. Pagination of resources is simple and straight-forward, thanks to [built-in, well-thought-out conventions](https://graphql-ruby.org/relay/connections.html) that cover a large variety of pagination-use-cases.
 6. Avoids a lot of bike-shedding. `PUT` vs `PATCH`? `400` vs `422`? How to handle deprecation? These questions, and more, are no longer concerns.
 7. The server's response can be extended to include more standardized behavior.
 
@@ -103,9 +109,9 @@ The mutator has simple methods that inject the notifications into the context...
 
 <script src="https://gist.github.com/harigopal/675ef7e93ac142cef4a9d7bc1038b091.js"></script>
 
-### However, concerns still exist.
+### However, concerns still exist
 
-#### This isn't what GraphQL promised.
+#### This isn't what GraphQL promised
 
 One of the stated advantages of GraphQL is that it solves the problem of over-fetching by allowing the client to specify exactly what data it needs, leading to the server fetching _only_ the asked-for data.
 
