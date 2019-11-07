@@ -118,7 +118,7 @@ One of the stated advantages of GraphQL is that it solves the problem of over-fe
 This approach definitely **ignores** that goal. We're taking this approach because of two reasons:
 
 1. Over-fetching is not a problem for [us](https://www.pupilfirst.com). It might become a problem _at scale_, but we're not at that size yet. It's generally better to tackle problems that exist now (ease of API usage, and avoiding clerical mistakes), instead of one that _might_ happen in the future.
-2. GraphQL doesn't actually _do_ anything to solve over-fetching - it just specifies how to deliver the data once you're retrieved it. However, retrieving data correctly is [still up to your _business logic_](https://graphql.org/learn/thinking-in-graphs/#business-logic-layer), which is always vaguely defined in all documentation that I've come across.
+2. GraphQL doesn't actually _do_ anything to solve over-fetching - it just specifies how to deliver the data once you've retrieved it. However, retrieving data correctly is [still up to your _business logic_](https://graphql.org/learn/thinking-in-graphs/#business-logic-layer), which is always vaguely defined in all documentation that I've come across.
 
 Arbitrarily loading relational data and incurring huge performance hits is one of the easiest mistakes to make with GraphQL, and it's not a problem whose solution is clear. At this point, I think it's appropriate to mention that Shopify has released a [`graphql-batch` gem](#) that _claims_ to tackle this issue. Unfortunately, I think it's poorly documented, and I couldn't really make sense of how it's supposed to work, but it may be worth looking at if you're already _at scale_, and dealing with issues like over-fetching.
 
