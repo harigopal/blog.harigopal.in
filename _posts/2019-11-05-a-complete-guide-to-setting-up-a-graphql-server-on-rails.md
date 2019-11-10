@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Conventions for setting up a GraphQL Server on Rails"
+title: "A Complete Guide to Setting up a GraphQL Server on Rails"
 date: 2019-11-05 20:20:00 +0530
 categories: guides
 tags: react reasonreact
@@ -19,11 +19,73 @@ This post presents a method for setting up a GraphQL server, while also tackling
 
 ### Start with `graphql-ruby`
 
-Use [the gem's documentation](https://graphql-ruby.org/getting_started) to install and get started with `graphql-ruby`. The steps are straight-forward and well-documented, but I suggest not setting up queries and mutations yet - we'll get to that.
+We'll be using the [well-documented `graphql-ruby` gem](https://graphql-ruby.org/getting_started) to get started with setting up a GraphQL server on Rails. If you're someone who's already familiar with `graphql-ruby`, feel free to [skip this section](#here-be-dragons).
 
-Just like with Facebook's documentation about authorization in GraphQL, the [gem's documentation also suggests pushing the responsibility into _business_ logic](https://graphql-ruby.org/authorization/overview.html#authorization-in-your-business-logic), specifically into model methods that accept `context` and decide what kind of relation or data is accessible for _that_ user.
+1. Add `gem 'graphql-ruby', '~> 1.9'` to your `Gemfile`.
+2. Run `bundle install` on the command line.
+3. Run the gem's installation generator: `rails generate graphql:install`.
+   - If Rails complains that it can't find `graphql:install`, try again after stopping `spring`, with `bin/spring stop`.
+4. The previous step will have updated the `Gemfile`, so you'll need run `bundle install` again.
 
-I'd like to suggest an alternative.
+At this point, `graphql-ruby` is all set up. Let's take a quick look at what the gem added to our Rails application, so that the following steps are easier to understand.
+
+```
+app/
+├─ config/routes.rb          (updated to include /graphql, and /graphiql)
+├─ controllers/
+|  └─ graphql_controller.rb  (all requests are handled by the execute action)
+└─ graphql/
+   ├─ my_rails_app_schema.rb (the web of interconnected types starts here)
+   ├─ types/
+   |  ├─ query_type.rb       (base type for all queries)
+   |  ├─ mutation_type.rb    (base type for all mutations)
+   |  └─ base_*.rb           (many other base types - object, enum, etc.)
+   └─ mutations/
+      └─ .keep               (empty - we haven't made any mutations yet)
+```
+
+If we take a look inside the `routes.rb` file, we can see that a new `/graphql` path is handled by the `GraphqlController#execute` method:
+
+<script src="https://gist.github.com/harigopal/877e2d5c9f79c1c1887e8ee9538d1bdd.js"></script>
+
+Notice how the incoming query is passed onto the schema (along with _context_) for execution. The _schema_ defines only two things right now:
+
+<script src="https://gist.github.com/harigopal/d6a8c4e27e1df99c7ef84db39b9b5e5e.js"></script>
+
+The schema says that mutations can be found in `Types::MutationType` and queries in `Types::QueryType`. If we take a look in either, we'll see a dummy field that we can play around with.
+
+One thing that I glossed over in `routes.rb` is that the gem also mounted the awesome _GraphiQL_ app on the `/graphiql` path. Visit the `/graphiql` path in your browser, and try running the following query there:
+
+```
+query {
+  testField
+}
+```
+
+You should get this response:
+
+```
+{
+  "data": {
+    "testField": "Hello World!"
+  }
+}
+```
+
+There you go! Now that we're done with our whirlwind tour of the `graphql-ruby` gem, let's start digging a bit deeper.
+
+### Here Be Dragons
+
+While the `graphql-ruby` gem has added a _ton_ of functionality to our app, it doesn't really go into detail as to what the best practices are for actually _using_ the gem. Specifically, as mentioned at the beginning of this guide, two issues that are glossed over are:
+
+1. How to handle authorization, and...
+2. How to efficiently query data.
+
+Just like the [official documentation about authorization in GraphQL](https://graphql.org/learn/authorization/), the [gem's documentation](https://graphql-ruby.org/authorization/overview.html#authorization-in-your-business-logic) also suggests pushing the responsibility for authorization into _business_ logic, specifically into model methods that accept `context` and decide what kind of relation or data is accessible for _that_ user.
+
+As for the potential for N+1 queries, it's pretty much ignored altogether - I'm guessing that you're expected to handle this on a case-by-case basis.
+
+I'd like to suggest an alternative: new _conventions_.
 
 ### _Resolvers_ authorize and fetch data
 
@@ -31,7 +93,7 @@ Let's start by adding an `ApplicationQuery` class that'll act as the base class 
 
 <script src="https://gist.github.com/harigopal/2270db1662f697fbbf8fd3303aca2029.js"></script>
 
-With that in place, we can start writing _resolver_ objects that will help us retrieve properly authorized data for GraphQL queries. Let's take the example of a query that asks for a list of users:
+With that in place, we can start writing _resolver_ objects that will help us retrieve properly authorized data for GraphQL queries. Let's start by creating a query that asks for a list of users:
 
 <script src="https://gist.github.com/harigopal/124000d16b0188d283c6ed92763b1f4e.js"></script>
 
@@ -85,13 +147,18 @@ Here, the custom `UpdatePostType` is used to compose exactly what the UI require
 
 ### What are the advantages of this approach?
 
+**On the server-side:**
+
 1. You have a self-documenting API. Testing it is a breeze thanks to GraphiQL.
-2. Your API is integrated with the editor - it'll suggest names, arguments, and return values - writing correct queries is much simpler.
-3. Your compiler will prevent the application from generating code with invalid queries.
-4. The Rails server will crash with a useful error message if your code ever disobeys the type specification.
-5. Pagination of resources is simple and straight-forward, thanks to [built-in, well-thought-out conventions](https://graphql-ruby.org/relay/connections.html) that cover a large variety of pagination-use-cases.
-6. Avoids a lot of bike-shedding. `PUT` vs `PATCH`? `400` vs `422`? How to handle deprecation? These questions, and more, are no longer concerns.
-7. The server's response can be extended to include more standardized behavior.
+2. The Rails server will crash with a useful error message if your code ever disobeys the type specification.
+3. Pagination of resources is simple and straight-forward, thanks to [built-in, well-thought-out conventions](https://graphql-ruby.org/relay/connections.html) that cover a large variety of pagination-use-cases.
+4. Avoids a lot of bike-shedding. `PUT` vs `PATCH`? `400` vs `422`? How to handle deprecation? These questions, and more, are no longer concerns.
+5. The server's response can be extended to include more standardized behavior.
+
+**On the client-side (assuming that you're using a typed language):**
+
+1. Your API is integrated with the editor - it'll suggest names, arguments, and return values - writing correct queries is much simpler.
+2. Your compiler will prevent the application from generating code with invalid queries.
 
 #### About extensibility
 
