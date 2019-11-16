@@ -29,6 +29,7 @@ sass:
 plugins:
   - jekyll-feed
   - jekyll-analytics
+  - jekyll-purgecss
 exclude:
   - Gemfile
   - Gemfile.lock
@@ -38,3 +39,5 @@ exclude:
 jekyll_analytics:
   GoogleAnalytics:
     id: UA-89604247-2
+
+css_dir: assets/css

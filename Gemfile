@@ -6,4 +6,5 @@ gem 'jekyll-feed', '~> 0.12'
 
 group :jekyll_plugins do
   gem 'jekyll-analytics', '~> 0.1'
+  gem 'jekyll-purgecss'
 end

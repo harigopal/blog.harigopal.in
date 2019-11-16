@@ -4,6 +4,7 @@
   "description": "This is the source of [blog.harigopal.in](https://blog.harigopal.in). The blog, hosted by Github, is built and pushed to [another repository](https://github.com/harigopal/harigopal.github.io) here.",
   "main": "src/index.js",
   "dependencies": {
+    "purgecss": "^1.4.1",
     "tailwindcss": "^1.1.3"
   },
   "devDependencies": {},
