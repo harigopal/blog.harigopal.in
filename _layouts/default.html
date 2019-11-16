@@ -1,23 +1,22 @@
-<html>
+<html class="font-sans">
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page.title }}</title>
   <meta charset="utf-8">
   {% feed_meta %}
-  <link rel="stylesheet" href="/css/site.css">
+  <!-- <link href="https://fonts.googleapis.com/css?family=Lora:400,400i,700|Open+Sans:400,400i,600,700&display=swap"
+    rel="stylesheet"> -->
+  <link href="https://fonts.googleapis.com/css?family=Lora:400,400i,700|Nunito+Sans:400,400i,700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <script src="https://kit.fontawesome.com/7053929c55.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
-  <header>
-    <div class="container">
-      {%- include nav.html -%}
-    </div>
-    {%- include header.html -%}
-  </header>
-  <main>
-    <div class="container">
-      {{ content }}
-    </div>
+  {%- include header.html -%}
+  <main class="py-8 md:pt-12 px-4 md:px-12 lg:px-16 xl:px-20">
+    {{ content }}
   </main>
 </body>
 

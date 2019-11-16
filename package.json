@@ -1,0 +1,22 @@
+{
+  "name": "blog.harigopal.in",
+  "version": "1.0.0",
+  "description": "This is the source of [blog.harigopal.in](https://blog.harigopal.in). The blog, hosted by Github, is built and pushed to [another repository](https://github.com/harigopal/harigopal.github.io) here.",
+  "main": "src/index.js",
+  "dependencies": {
+    "tailwindcss": "^1.1.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "tailwind:build": "tailwind build src/tailwind.css -o _sass/_tailwind.scss"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/harigopal/blog.harigopal.in.git"
+  },
+  "author": "Hari Gopal",
+  "bugs": {
+    "url": "https://github.com/harigopal/blog.harigopal.in/issues"
+  },
+  "homepage": "https://github.com/harigopal/blog.harigopal.in#readme"
+}

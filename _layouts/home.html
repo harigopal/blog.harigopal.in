@@ -2,23 +2,21 @@
 layout: default
 ---
 {%- if site.posts.size > 0 -%}
-<ul class="posts">
+<div class="theme__home">
   {%- for post in site.posts -%}
-  <li>
+  <div>
     {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
-    <div class="post-meta">
-      <a class="post-link" href="{{ post.url | relative_url }}">
-        <h2 class="post-title">{{ post.title | escape }}</h2>
-      </a>
-      <div class="post-date"><i class="icon-calendar"></i>{{ post.date | date: date_format }}</div>
-    </div>
+    <div class="mb-6">
+      <div class="text-gray-500 mb-1">
+        <i class="fa fa-calendar"></i>
+        <span class="ml-1">{{ post.date | date: date_format }}</span>
+      </div>
 
-    <div class="post">
-      {%- if site.show_excerpts -%}
-      {{ post.excerpt }}
-      {%- endif -%}
+      <a href="{{ post.url | relative_url }}">
+        <h2 class="text-3xl font-serif">{{ post.title | escape }}</h2>
+      </a>
     </div>
-  </li>
+  </div>
   {%- endfor -%}
-</ul>
+</div>
 {%- endif -%}

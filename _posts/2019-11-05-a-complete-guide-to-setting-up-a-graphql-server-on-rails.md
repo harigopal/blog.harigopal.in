@@ -17,7 +17,7 @@ This post presents a method for setting up a GraphQL server, while also tackling
 1. How do I handle authorization?
 2. How do I avoid N+1 queries?
 
-### Start with `graphql-ruby`
+### Start with _graphql-ruby_
 
 We'll be using the [well-documented `graphql-ruby` gem](https://graphql-ruby.org/getting_started) to get started with setting up a GraphQL server on Rails. If you're someone who's already familiar with `graphql-ruby`, feel free to [skip this section](#here-be-dragons).
 
