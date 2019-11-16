@@ -35,6 +35,8 @@ exclude:
   - Gemfile.lock
   - node_modules
   - src/
+  - "package*.json"
+  - "*.config.js"
 
 jekyll_analytics:
   GoogleAnalytics:
