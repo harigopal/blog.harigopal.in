@@ -1,6 +1,4 @@
 .theme__post {
-  font-size: 120%;
-
   p, ul, ol, h1, h2, h3, h4, h5, h6 { max-width: 48rem; }
 
   h1, h2, h3, h4, h5, h6 {
@@ -9,6 +7,7 @@
     margin-top: 0.25rem;
   };
 
+  h1 { font-size: 275%; font-style: italic; margin-bottom: 2rem; }
   h2 { font-size: 225% }
   h3 { font-size: 200% }
   h4 { font-size: 175% }
