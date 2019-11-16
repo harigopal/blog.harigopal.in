@@ -29,6 +29,7 @@ sass:
 plugins:
   - jekyll-feed
   - jekyll-analytics
+  - jekyll-seo-tag
   - jekyll-purgecss
 exclude:
   - Gemfile
