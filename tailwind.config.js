@@ -1,4 +1,6 @@
 module.exports = {
+  purge: [],
+  darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {},
     fontFamily: {
@@ -9,5 +11,5 @@ module.exports = {
   variants: {
     borderWidth: ['responsive', 'hover'],
   },
-  plugins: []
+  plugins: [],
 }

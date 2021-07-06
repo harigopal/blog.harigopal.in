@@ -30,7 +30,7 @@ plugins:
   - jekyll-feed
   - jekyll-analytics
   - jekyll-seo-tag
-  - jekyll-purgecss
+  - jekyll-postcss
 exclude:
   - Gemfile
   - Gemfile.lock
