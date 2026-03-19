@@ -5,10 +5,10 @@ title: About
 
 Hello, inquisitive person!
 
-You're browsing the blog of [Hari Gopal](https://www.harigopal.in), a programmer who lives in Bengaluru, India.
+I'm [Hari Gopal](https://www.harigopal.in), a programmer who lives in [Kochi](https://en.wikipedia.org/wiki/Kochi), [Kerala](https://en.wikipedia.org/wiki/Kerala), [India](https://en.wikipedia.org/wiki/India).
 
-He's currently working as the CTO at [SV.CO](https://www.sv.co), where he works with a team of awesome people on
-[PupilFirst](https://www.pupilfirst.com). It's a learning management system meant for teachers who truly care about
-improving student outcome, by applying the most effective techniques available.
+I'm a web developer, and I'm currently working on a project of my own called [AutoBudget](https://autobudget.ai/). I'm a bit of a personal finance nerd, and I've always wanted to make a tool that makes it easier for others to manage their finances easily.
 
-If you'd like to talk to him, you can [send him an email](mailto:mail@harigopal.in), or [find him on Twitter](https://twitter.com/harigopal).
+Prior to beginning work on AutoBudget, I was the CTO at [Pupilfirst](https://www.pupilfirst.org/), where I led a small team working on a learning management system (of the same name), and also authored courses meant to help college-level students pick up technical skills necessary to start working effectively.
+
+If you'd like to contact me, you can [send me an email](mailto:mail@harigopal.in).
