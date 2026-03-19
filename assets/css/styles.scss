@@ -1,9 +1,9 @@
 ---
 ---
+@use "header";
+@use "monokai_highlight";
+@use "theme";
 
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
-@import "header";
-@import "monokai_highlight";
-@import "theme";
